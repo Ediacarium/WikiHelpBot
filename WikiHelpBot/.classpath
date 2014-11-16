@@ -2,8 +2,5 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="/usr/share/java/jsp-api-2.2.jar"/>
-	<classpathentry kind="lib" path="/usr/share/java/xmlParserAPIs.jar"/>
-	<classpathentry kind="lib" path="/usr/share/java/xml-apis.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
