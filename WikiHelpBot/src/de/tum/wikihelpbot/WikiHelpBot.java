@@ -21,7 +21,6 @@ import org.xml.sax.SAXException;
 public class WikiHelpBot {
 
 	public static final Pattern removeHTMLTagsPattern = Pattern.compile("<[^>]*>", Pattern.DOTALL);
-	
 	public static final Pattern askingPattern = Pattern.compile("(?i)Was ist |What is |Was sind |Wer ist |What are ");
 
 	private final String wikiLangDomain;
@@ -90,6 +89,29 @@ public class WikiHelpBot {
 
 		return wikiTableText;
 	}
+	
+	private String handleTextNode(String textNodeText){
+		
+		System.out.println(textNodeText);
+		
+		if (resolveRedirection(textNodeText)) {
+			System.out.println("resolved text: " + textNodeText);
+			return textNodeText;
+		}
+
+		int indexOfTableEnd = textNodeText.lastIndexOf("</table>") + 9;
+		int indexOfReferences = textNodeText.indexOf("<ol class=\"references\"");
+		String HTMLwikiPageText = textNodeText.substring(indexOfTableEnd, indexOfReferences >= 0 ? indexOfReferences : textNodeText.length());
+		System.out.println(HTMLwikiPageText);
+
+		String wikiPageText = removeHTMLfromString(HTMLwikiPageText);
+		
+		if (wikiPageText.matches("[\n ]*")) {
+			return useTablePage(textNodeText.substring(0,indexOfTableEnd));
+		}
+		return wikiPageText;
+
+	}
 
 	private String extractHTMLPageText(InputStream WikiXml) {
 
@@ -105,26 +127,7 @@ public class WikiHelpBot {
 			NodeList textNodes = doc.getElementsByTagName("text");
 			Node textNode = textNodes.item(0);
 			if (textNode != null) {
-				String textNodeText = textNode.getTextContent();
-				System.out.println(textNodeText);
-
-				if (resolveRedirection(textNodeText)) {
-					System.out.println("resolved text: " + textNodeText);
-					return textNodeText;
-				}
-
-				int indexOfTableEnd = textNodeText.lastIndexOf("</table>") + 9;
-				int indexOfReferences = textNodeText.indexOf("<ol class=\"references\"");
-				String HTMLwikiPageText = textNodeText.substring(indexOfTableEnd, indexOfReferences >= 0 ? indexOfReferences : textNodeText.length());
-				System.out.println(HTMLwikiPageText);
-
-				String wikiPageText = removeHTMLfromString(HTMLwikiPageText);
-				
-				if (wikiPageText.matches("[\n ]*")) {
-					return useTablePage(textNodeText.substring(0,indexOfTableEnd));
-				}
-				return wikiPageText;
-
+				return handleTextNode(textNode.getTextContent());
 			}
 			return "Wikipedia doesn't respond";
 		} catch (SAXException e) {
@@ -175,6 +178,7 @@ public class WikiHelpBot {
 
 		System.out.println(helpBot.needWikiResponse("Was sind Bananen"));
 		System.out.println(helpBot.needWikiResponse("Was ist Memory"));
+		System.out.println(helpBot.needWikiResponse("Was ist Blubb"));
 
 	}
 }
