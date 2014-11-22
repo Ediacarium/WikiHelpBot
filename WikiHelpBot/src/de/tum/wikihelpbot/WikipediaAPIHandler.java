@@ -20,6 +20,8 @@ import org.xml.sax.SAXException;
 public class WikipediaAPIHandler {
 
 	public static final Pattern removeHTMLTagsPattern = Pattern.compile("<[^>]*>", Pattern.DOTALL);
+	public static final Pattern removeadditionalWhiteSpaces = Pattern.compile(" +", Pattern.DOTALL);
+	public static final Pattern removeadditionalnewLines = Pattern.compile("\n+", Pattern.DOTALL);
 	public static final int maxSummaryCharacterCount = 200;
 	
 	public final String wikiLangDomain;
@@ -57,8 +59,9 @@ public class WikipediaAPIHandler {
 	
 	public String removeHTMLfromString(String text) {
 		String modWikiPageString = removeHTMLTagsPattern.matcher(text).replaceAll("");
-		// System.out.println(modWikiPageString);
-		return modWikiPageString;
+		String rmaddWhiteSpacesWikiPageString = removeadditionalWhiteSpaces.matcher(modWikiPageString).replaceAll(" ");
+		String rmaddNewLinesWikiPageString = removeadditionalnewLines.matcher(rmaddWhiteSpacesWikiPageString).replaceAll("\n");
+		return rmaddNewLinesWikiPageString;
 	}
 	
 	public String shortenWikiLink(String topic, String summary){
@@ -106,7 +109,7 @@ public class WikipediaAPIHandler {
 			return removeHTMLfromString(textNodeText);
 		}
 
-		int indexOfTableEnd = textNodeText.lastIndexOf("</table>") + 9;
+		int indexOfTableEnd = textNodeText.contains("</table>") ? textNodeText.lastIndexOf("</table>") + 9: 0;
 		int indexOfReferences = textNodeText.indexOf("<ol class=\"references\"");
 		indexOfReferences = indexOfReferences >= 0 ? indexOfReferences : textNodeText.length();
 		String HTMLwikiPageText = textNodeText.substring(indexOfTableEnd, indexOfReferences);

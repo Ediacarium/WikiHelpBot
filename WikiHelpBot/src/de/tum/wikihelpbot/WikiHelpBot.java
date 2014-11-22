@@ -2,27 +2,16 @@ package de.tum.wikihelpbot;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
 public class WikiHelpBot {
 
-	public static final Pattern askingPattern = Pattern.compile("(?i)Was ist |What is |Was sind |Wer ist |What are ");
+	public static final Pattern askingPattern = Pattern.compile("(?i)Wer ist |Was ist ein |Was ist eine |Was ist der |Was ist die |Was ist das |Was ist |Was sind |What is an |What is a |What is |What are ");
+	public static final Pattern greetingPattern = Pattern.compile("guten morgen.*|good morning.*");
 	
 	private WikipediaAPIHandler apiHandler;
 	
@@ -54,19 +43,20 @@ public class WikiHelpBot {
 			 System.out.println(msg.substring(start - 1, IndexOfQMark >= 0 ? IndexOfQMark : msg.length()).trim());
 			return getWikiHelp(msg.substring(start - 1, IndexOfQMark >= 0 ? IndexOfQMark : msg.length()).trim());
 		}
+		return null;
 
-		String[] words = msg.split(" ");
-		List<String> answers = new ArrayList<>();
-		System.out.println(words.length);
-		for (int i = 0; i < words.length; i++) {
-			String answer = getWikiHelp(words[i]);
-			if(answer != null){
-				answers.add(apiHandler.shortenWikiLink(words[i], answer));
-			}
-		}
-		return answers.get(0);
 	}
-
+	
+	public String getWikiBotWisdom(String message){
+		
+		if(greetingPattern.matcher(message.trim().toLowerCase()).matches()){
+			return "Der WikiHelpBot grüßt euch, Erdbewohner";
+		}
+		else{
+			return needWikiResponse(message);
+		}
+	}
+	
 	public static void main(String args[]) throws IOException {
 
 		boolean exit = false;
@@ -76,17 +66,13 @@ public class WikiHelpBot {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 			String line = reader.readLine();
 			exit = line.equals("exit");
-			String wikiHelp = helpBot.needWikiResponse(line);
+			String wikiHelp = helpBot.getWikiBotWisdom(line);
 
 			if (wikiHelp != null) {
 				System.out.println("Wikipedia says:");
 				 System.out.println(wikiHelp);
 			}
 		}
-
-		// System.out.println(helpBot.needWikiResponse("Was sind Bananen"));
-		// System.out.println(helpBot.needWikiResponse("Was ist Memory"));
-		// helpBot.needWikiResponse("Was geht ab?");
 
 	}
 }
