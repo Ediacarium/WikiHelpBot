@@ -10,13 +10,13 @@ import bridgempp.bot.example.BridgeMPPBotExample.Message;
  * The WikiHelpBot integration class for BridgeMPP
  *
  */
-public class BrideMPPIntegration implements bridgempp.bot.example.BridgeMPPBotExample.Bot {
+public class WikiHelpBotBrideMPPIntegration implements bridgempp.bot.example.BridgeMPPBotExample.Bot {
 
 	public static final String Name = "WikiHelpBot";
 
 	WikiHelpBot helpBot;
 
-	public BrideMPPIntegration() {
+	public WikiHelpBotBrideMPPIntegration() {
 		this.helpBot = new WikiHelpBot("de");
 	}
 
