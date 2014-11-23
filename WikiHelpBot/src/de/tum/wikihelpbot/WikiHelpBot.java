@@ -1,10 +1,10 @@
 package de.tum.wikihelpbot;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,7 +40,6 @@ public class WikiHelpBot {
 		if (askingMatcher.find()) {
 			int IndexOfQMark = msg.indexOf('?');
 			int start = askingMatcher.group().length();
-			 System.out.println(msg.substring(start - 1, IndexOfQMark >= 0 ? IndexOfQMark : msg.length()).trim());
 			return getWikiHelp(msg.substring(start - 1, IndexOfQMark >= 0 ? IndexOfQMark : msg.length()).trim());
 		}
 		return null;
@@ -61,11 +60,11 @@ public class WikiHelpBot {
 
 		boolean exit = false;
 		WikiHelpBot helpBot = new WikiHelpBot("de");
+		Scanner reader = new Scanner(System.in);
 
 		while (!exit) {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-			String line = reader.readLine();
-			exit = line.equals("exit");
+			String line = reader.nextLine();
+			//exit = line.equals("exit");
 			String wikiHelp = helpBot.getWikiBotWisdom(line);
 
 			if (wikiHelp != null) {
@@ -73,6 +72,6 @@ public class WikiHelpBot {
 				 System.out.println(wikiHelp);
 			}
 		}
-
+		reader.close();
 	}
 }
